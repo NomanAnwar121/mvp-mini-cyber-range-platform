@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  dvwa:
+    image: vulnerables/web-dvwa
+    container_name: dvwa_lab
+    ports:
+      - "8080:80"
+    restart: unless-stopped

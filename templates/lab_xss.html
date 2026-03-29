@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Reflected XSS Lab</h1>
+    <p>This page simulates a vulnerable search application using the <code>q</code> URL parameter.</p>
+    <p><strong>Example:</strong> <code>{{ example_url }}</code></p>
+    <p><strong>Attempts so far:</strong> {{ attempts }}</p>
+
+    <form method="GET" action="{{ url_for('lab_xss') }}" class="form">
+        <input type="text" name="q" placeholder="Search products, tickets, docs..." value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Search Results</h2>
+    <p><strong>Current q parameter:</strong> {{ query }}</p>
+    <div class="unsafe-box">{{ query|safe }}</div>
+</div>
+
+{% if executed %}
+<div class="card">
+    <h2>Execution Status</h2>
+    <p>The platform detected a successful reflected XSS-style payload.</p>
+</div>
+{% endif %}
+
+{% if hint %}
+<div class="card">
+    <h2>Automation Hint</h2>
+    <div class="info">{{ hint }}</div>
+</div>
+{% endif %}
+
+{% if flag %}
+<div class="card">
+    <h2 class="success">Flag Revealed</h2>
+    <p><strong>{{ flag }}</strong></p>
+    <a class="btn" href="{{ url_for('tasks') }}">Submit This Flag</a>
+</div>
+{% endif %}
+{% endblock %}

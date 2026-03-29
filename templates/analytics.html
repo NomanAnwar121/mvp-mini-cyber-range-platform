@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-grid">
+    <div class="card stat-card">
+        <h2>Score</h2>
+        <p class="stat-value">{{ score }}</p>
+        <p class="stat-label">Current Score</p>
+    </div>
+
+    <div class="card stat-card">
+        <h2>Completion</h2>
+        <p class="stat-value">{{ completed_count }}/{{ total_count }}</p>
+        <p class="stat-label">Finished Labs</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Learner Recommendation</h2>
+    <p>{{ recommendation }}</p>
+</div>
+
+<div class="card">
+    <h2>Performance Analytics</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Challenge</th>
+                <th>Skill Area</th>
+                <th>MITRE ATT&CK</th>
+                <th>Attempts</th>
+                <th>Successes</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in challenge_rows %}
+            <tr>
+                <td>{{ row.title }}</td>
+                <td>{{ row.skill_area }}</td>
+                <td>{{ row.mitre }}</td>
+                <td>{{ row.attempts }}</td>
+                <td>{{ row.successes }}</td>
+                <td>
+                    {% if row.completed %}
+                        <span class="success">Completed</span>
+                    {% else %}
+                        <span class="pending">In Progress</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

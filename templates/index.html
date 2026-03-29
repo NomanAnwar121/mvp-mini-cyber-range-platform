@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero-card">
+    <h1>Mini Cyber Range Platform</h1>
+    <p>Practice SQL Injection, Reflected XSS, and IDOR using realistic URL parameters, flag submission, analytics, and campaign simulation.</p>
+
+    <form method="POST" class="form form-narrow">
+        <input type="text" name="username" placeholder="Enter username (student, analyst, admin)" required>
+        <button type="submit">Login</button>
+    </form>
+</div>
+{% endblock %}

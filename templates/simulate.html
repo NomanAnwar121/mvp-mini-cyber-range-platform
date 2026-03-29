@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>{{ challenge.title }} - Attack Simulation</h1>
+    <p>{{ challenge.description }}</p>
+    <p><strong>Skill Area:</strong> {{ challenge.skill_area }}</p>
+    <p><strong>MITRE ATT&CK:</strong> {{ challenge.mitre }}</p>
+    <p><strong>Difficulty:</strong> {{ challenge.difficulty }}</p>
+</div>
+
+<div class="card">
+    <h2>Simulated Attack Flow</h2>
+    <ol class="step-list">
+        {% for step in challenge.simulation_steps %}
+        <li>{{ step }}</li>
+        {% endfor %}
+    </ol>
+</div>
+
+<div class="card">
+    <h2>Educational Outcome</h2>
+    <p>This simulation explains the offensive workflow before the learner opens the real lab.</p>
+</div>
+{% endblock %}

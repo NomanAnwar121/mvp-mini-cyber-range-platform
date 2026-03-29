@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Instructor / Admin Dashboard</h1>
+    <p>Overview of learner performance, attempts, and campaign progress.</p>
+</div>
+
+<div class="card">
+    <h2>User Summary</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Score</th>
+                <th>Completed Labs</th>
+                <th>Total Attempts</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.score }}</td>
+                <td>{{ user.completed_count }}</td>
+                <td>{{ user.attempt_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Challenge Overview</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Challenge ID</th>
+                <th>Total Attempts</th>
+                <th>Total Successes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in challenge_stats %}
+            <tr>
+                <td>{{ stat.challenge_id }}</td>
+                <td>{{ stat.total_attempts }}</td>
+                <td>{{ stat.total_successes or 0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Campaign Runs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Campaign</th>
+                <th>Status</th>
+                <th>Current Step</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in campaign_runs %}
+            <tr>
+                <td>{{ run.username }}</td>
+                <td>{{ run.campaign_title }}</td>
+                <td>{{ run.run_status }}</td>
+                <td>{{ run.current_step_order }}</td>
+                <td>{{ run.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

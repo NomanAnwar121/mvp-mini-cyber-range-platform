@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Stored XSS Lab</h1>
+    <p>This page simulates a vulnerable blog comment system that stores input and renders it unsafely.</p>
+    <p><strong>Attempts so far:</strong> {{ attempts }}</p>
+
+    <form method="POST" class="form">
+        <input type="text" name="author" placeholder="Your name">
+        <input type="text" name="content" placeholder="Write a comment..." required>
+        <button type="submit">Post Comment</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Comments</h2>
+    {% for comment in comments %}
+    <div class="log-box">
+        <p><strong>{{ comment.author }}</strong></p>
+        <div class="unsafe-box">{{ comment.content|safe }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if hint %}
+<div class="card">
+    <h2>Automation Hint</h2>
+    <div class="info">{{ hint }}</div>
+</div>
+{% endif %}
+
+{% if flag %}
+<div class="card">
+    <h2 class="success">Flag Revealed</h2>
+    <p><strong>{{ flag }}</strong></p>
+    <a class="btn" href="{{ url_for('tasks') }}">Submit This Flag</a>
+</div>
+{% endif %}
+{% endblock %}

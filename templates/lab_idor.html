@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>IDOR Lab</h1>
+    <p>This lab uses a direct object reference in the URL.</p>
+    <p><strong>Example:</strong> <code>{{ example_url }}</code></p>
+    <p><strong>Goal:</strong> change the <code>id</code> value manually in the URL.</p>
+    <p><strong>Attempts so far:</strong> {{ attempts }}</p>
+</div>
+
+<div class="card">
+    <h2>Your Normal Records</h2>
+    <ul class="simple-list">
+        {% for row in user_records %}
+        <li>
+            Record {{ row.id }} -
+            <a href="{{ url_for('lab_idor') }}?id={{ row.id }}">Open with ?id={{ row.id }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Requested Object</h2>
+    <p><strong>Current URL id:</strong> {{ current_id }}</p>
+
+    {% if record %}
+        <p><strong>ID:</strong> {{ record.id }}</p>
+        <p><strong>Name:</strong> {{ record.name }}</p>
+        <p><strong>Email:</strong> {{ record.email }}</p>
+        <p><strong>Notes:</strong> {{ record.notes }}</p>
+    {% else %}
+        <p>Record not found.</p>
+    {% endif %}
+</div>
+
+{% if unauthorized_access %}
+<div class="card">
+    <h2 class="pending">Unauthorized Object Access Detected</h2>
+    <p>You are viewing a record that does not belong to your current user. This simulates IDOR.</p>
+</div>
+{% endif %}
+
+{% if hint %}
+<div class="card">
+    <h2>Automation Hint</h2>
+    <div class="info">{{ hint }}</div>
+</div>
+{% endif %}
+
+{% if flag %}
+<div class="card">
+    <h2 class="success">Flag Revealed</h2>
+    <p><strong>{{ flag }}</strong></p>
+    <a class="btn" href="{{ url_for('tasks') }}">Submit This Flag</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Employee Portal</h1>
+    <p>Welcome to VulnPortal. This internal portal contains profile data, invoices, and support search features used in training scenarios.</p>
+    <div class="button-group">
+        <a class="btn" href="{{ url_for('portal_profile') }}">Profile</a>
+        <a class="btn secondary" href="{{ url_for('portal_invoices') }}">Invoices</a>
+        <a class="btn secondary" href="{{ url_for('portal_support') }}">Support Search</a>
+    </div>
+</div>
+
+<div class="card">
+    <h2>User Summary</h2>
+    <p><strong>Name:</strong> {{ profile.full_name }}</p>
+    <p><strong>Email:</strong> {{ profile.email }}</p>
+    <p><strong>Department:</strong> {{ profile.department }}</p>
+    <p><strong>Role:</strong> {{ profile.role }}</p>
+</div>
+
+<div class="card">
+    <h2>Recent Invoices</h2>
+    {% if invoices %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice ID</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Open</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td>{{ invoice.id }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>{{ invoice.status }}</td>
+                    <td><a href="{{ url_for('portal_invoice_detail', invoice_id=invoice.id) }}">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No invoices available.</p>
+    {% endif %}
+</div>
+{% endblock %}

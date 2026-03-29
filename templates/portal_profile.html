@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Profile</h1>
+    <p><strong>Full Name:</strong> {{ profile.full_name }}</p>
+    <p><strong>Email:</strong> {{ profile.email }}</p>
+    <p><strong>Department:</strong> {{ profile.department }}</p>
+    <p><strong>Role:</strong> {{ profile.role }}</p>
+</div>
+{% endblock %}

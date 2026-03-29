@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>Automated Attack Campaigns</h1>
+    <p>These guided red team exercises simulate ATT&CK-mapped attack chains and orchestration logs.</p>
+</div>
+
+<div class="challenge-grid">
+    {% for campaign in campaigns %}
+    <div class="challenge-box">
+        <h3>{{ campaign.title }}</h3>
+        <p>{{ campaign.description }}</p>
+        <p><strong>Framework:</strong> {{ campaign.framework }}</p>
+        <p><strong>Level:</strong> {{ campaign.level }}</p>
+        <p><strong>Target:</strong> {{ campaign.target }}</p>
+        <p><strong>Phases:</strong> {{ campaign.steps|length }}</p>
+
+        <div class="button-group">
+            <a class="btn secondary" href="{{ url_for('campaign_detail', campaign_id=campaign.id) }}">View Details</a>
+            <form method="POST" action="{{ url_for('run_campaign_route', campaign_id=campaign.id) }}" style="display:inline;">
+                <button type="submit">Run Campaign</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h2>Recent Runs</h2>
+    {% if runs %}
+    <table>
+        <thead>
+            <tr>
+                <th>Campaign</th>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Executed At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in runs %}
+            <tr>
+                <td>{{ run.campaign_title }}</td>
+                <td>{{ run.campaign_id }}</td>
+                <td>{{ run.run_status }}</td>
+                <td>{{ run.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No campaign executions yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

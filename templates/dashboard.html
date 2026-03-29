@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-grid">
+    <div class="card stat-card">
+        <h2>Welcome, {{ username }}</h2>
+        <p class="stat-value">{{ score }}</p>
+        <p class="stat-label">Total Score</p>
+    </div>
+
+    <div class="card stat-card">
+        <h2>Progress</h2>
+        <p class="stat-value">{{ completed_count }}/{{ total_count }}</p>
+        <p class="stat-label">Challenges Completed</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Training Recommendation</h2>
+    <p>{{ recommendation }}</p>
+    <div class="button-group">
+        <a class="btn secondary" href="{{ url_for('tasks') }}">Submit Flags</a>
+        <a class="btn secondary" href="{{ url_for('analytics') }}">Open Analytics</a>
+        <a class="btn secondary" href="{{ url_for('campaigns') }}">Open Campaigns</a>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Available Labs</h2>
+    <div class="challenge-grid">
+        {% for challenge in challenges %}
+        <div class="challenge-box">
+            <h3>{{ challenge.title }}</h3>
+            <p>{{ challenge.description }}</p>
+            <p><strong>Category:</strong> {{ challenge.category }}</p>
+            <p><strong>Difficulty:</strong> {{ challenge.difficulty }}</p>
+            <p><strong>Skill Area:</strong> {{ challenge.skill_area }}</p>
+            <p><strong>MITRE ATT&CK:</strong> {{ challenge.mitre }}</p>
+            <p><strong>Points:</strong> {{ challenge.points }}</p>
+
+            {% if challenge.title in completed_titles %}
+                <p class="success">Status: Completed</p>
+            {% else %}
+                <p class="pending">Status: Not Completed</p>
+            {% endif %}
+
+            <div class="button-group">
+                {% if challenge.id == 'sqli' %}
+                    <a class="btn" href="{{ url_for('lab_sqli') }}">Open SQLi</a>
+                {% elif challenge.id == 'xss' %}
+                    <a class="btn" href="{{ url_for('lab_xss') }}?q=welcome">Open Reflected XSS</a>
+                {% elif challenge.id == 'stored_xss' %}
+                    <a class="btn" href="{{ url_for('lab_stored_xss') }}">Open Stored XSS</a>
+                {% elif challenge.id == 'idor' %}
+                    <a class="btn" href="{{ url_for('lab_idor') }}?id=1001">Open IDOR</a>
+                {% endif %}
+                <a class="btn secondary" href="{{ url_for('simulate_attack', challenge_id=challenge.id) }}">Simulate</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h2>Automated Campaigns</h2>
+    <div class="challenge-grid">
+        {% for campaign in campaigns %}
+        <div class="challenge-box">
+            <h3>{{ campaign.title }}</h3>
+            <p>{{ campaign.description }}</p>
+            <p><strong>Framework:</strong> {{ campaign.framework }}</p>
+            <p><strong>Level:</strong> {{ campaign.level }}</p>
+            <p><strong>Target:</strong> {{ campaign.target }}</p>
+            <a class="btn secondary" href="{{ url_for('campaign_detail', campaign_id=campaign.id) }}">View Campaign</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

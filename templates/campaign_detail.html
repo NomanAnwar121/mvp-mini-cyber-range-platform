@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>{{ campaign.title }}</h1>
+    <p>{{ campaign.description }}</p>
+    <p><strong>Framework:</strong> {{ campaign.framework }}</p>
+    <p><strong>Level:</strong> {{ campaign.level }}</p>
+    <p><strong>Target:</strong> {{ campaign.target }}</p>
+
+    <form method="POST" action="{{ url_for('run_campaign_route', campaign_id=campaign.id) }}">
+        <button type="submit">Run This Campaign</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Campaign Phases</h2>
+    <ol class="step-list">
+        {% for step in campaign.steps %}
+        <li>
+            <strong>{{ step.name }}</strong><br>
+            <span><strong>Technique:</strong> {{ step.technique }}</span><br>
+            <span><strong>Atomic-style Test:</strong> {{ step.atomic_test }}</span><br>
+            <span>{{ step.description }}</span>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+
+<div class="card">
+    <h2>Execution Logs</h2>
+    {% if logs %}
+        {% for log in logs %}
+        <div class="log-box">
+            <p><strong>Step:</strong> {{ log.step_name }}</p>
+            <p><strong>Technique:</strong> {{ log.technique }}</p>
+            <p><strong>Status:</strong> {{ log.step_status }}</p>
+            <p><strong>Log:</strong> {{ log.log_message }}</p>
+            <p><strong>Time:</strong> {{ log.created_at }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No execution logs yet. Run the campaign to generate logs.</p>
+    {% endif %}
+</div>
+{% endblock %}

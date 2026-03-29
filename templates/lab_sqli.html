@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h1>SQL Injection Lab</h1>
+    <p>This lab simulates an insecure login form vulnerable to SQL injection.</p>
+    <p><strong>Goal:</strong> bypass authentication for the <strong>admin</strong> account.</p>
+    <p><strong>Attempts so far:</strong> {{ attempts }}</p>
+
+    <form method="POST" class="form">
+        <input type="text" name="username" placeholder="Username" value="{{ username_input }}" required>
+        <input type="text" name="password" placeholder="Password" value="{{ password_input }}" required>
+        <button type="submit">Attempt Login</button>
+    </form>
+</div>
+
+{% if query_preview %}
+<div class="card">
+    <h2>Unsafe Query Preview</h2>
+    <div class="code-block">{{ query_preview }}</div>
+</div>
+{% endif %}
+
+{% if result %}
+<div class="card">
+    <h2>Result</h2>
+    <p>{{ result }}</p>
+</div>
+{% endif %}
+
+{% if hint %}
+<div class="card">
+    <h2>Automation Hint</h2>
+    <div class="info">{{ hint }}</div>
+</div>
+{% endif %}
+
+{% if flag %}
+<div class="card">
+    <h2 class="success">Flag Revealed</h2>
+    <p><strong>{{ flag }}</strong></p>
+    <a class="btn" href="{{ url_for('tasks') }}">Submit This Flag</a>
+</div>
+{% endif %}
+{% endblock %}
