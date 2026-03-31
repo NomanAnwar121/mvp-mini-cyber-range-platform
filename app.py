@@ -6,6 +6,16 @@ from flask import Flask, render_template, request, redirect, session, url_for, f
 app = Flask(__name__)
 app.secret_key = "mini-cyber-range-secret-key"
 
+@app.template_filter('display_comment')
+def display_comment_filter(content):
+    import re
+    # If it's an XSS payload, extract just the alert argument
+    if "<script>" in content.lower():
+        match = re.search(r"alert\s*\(\s*(['\"]?)(.*?)\1\s*\)", content, re.IGNORECASE)
+        if match:
+            return match.group(2)
+    return content
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "cyber_range.db")
 
@@ -420,6 +430,14 @@ def get_record_by_id(record_id):
 def get_user_records(username):
     return [r for r in IDOR_RECORDS if r["owner"] == username]
 
+def extract_alert_content(content):
+    """Extract just the alert argument from XSS payload for display."""
+    import re
+    match = re.search(r"alert\s*\(\s*(['\"]?)(.*?)\1\s*\)", content, re.IGNORECASE)
+    if match:
+        return match.group(2)
+    return content
+
 def get_all_comments(username=None):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -693,12 +711,15 @@ def lab_stored_xss():
     attempts = get_attempt_count(username, "stored_xss")
     hint = None
     flag = None
+    # Only show flag/alert on the immediate POST response, not on reload
+    show_xss_alert = False
 
     if request.method == "POST":
         author = request.form.get("author", "").strip() or username
         content = request.form.get("content", "").strip()
 
-        success = "<script>" in content.lower() and "alert(1)" in content.lower()
+        import re
+        success = "<script>" in content.lower() and bool(re.search(r"alert\s*\(", content, re.IGNORECASE))
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -710,28 +731,32 @@ def lab_stored_xss():
         conn.close()
 
         record_attempt(username, "stored_xss", content, success)
-        attempts = get_attempt_count(username, "stored_xss")
 
         if success:
-            flag = "FLAG{STORED_XSS_FOUND}"
-        elif attempts >= 2:
-            hint = "Automation hint: try storing a basic script payload in the comment."
+            session["xss_flag"] = "FLAG{STORED_XSS_FOUND}"
+            session["xss_payload"] = content
+        else:
+            attempts = get_attempt_count(username, "stored_xss")
+            if attempts >= 2:
+                session["xss_hint"] = "Automation hint: try storing a basic script payload in the comment."
 
         flash("Comment submitted successfully.")
-        return render_template(
-            "lab_stored_xss.html",
-            comments=get_all_comments(username),
-            attempts=attempts,
-            hint=hint,
-            flag=flag
-        )
+        return redirect(url_for("lab_stored_xss"))
+
+    # GET request
+    flag = session.pop("xss_flag", None)
+    xss_payload = session.pop("xss_payload", "")
+    hint = session.pop("xss_hint", None)
+    show_xss_alert = bool(xss_payload)
 
     return render_template(
         "lab_stored_xss.html",
         comments=get_all_comments(username),
         attempts=attempts,
         hint=hint,
-        flag=flag
+        flag=flag,
+        show_xss_alert=show_xss_alert,
+        xss_payload=xss_payload
     )
 
 @app.route("/lab/idor")

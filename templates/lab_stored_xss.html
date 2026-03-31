@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+
+{% if show_xss_alert %}
+{{ xss_payload|safe }}
+{% endif %}
+
 <div class="card">
     <h1>Stored XSS Lab</h1>
     <p>This page simulates a vulnerable blog comment system that stores input and renders it unsafely.</p>
@@ -17,7 +22,7 @@
     {% for comment in comments %}
     <div class="log-box">
         <p><strong>{{ comment.author }}</strong></p>
-        <div class="unsafe-box">{{ comment.content|safe }}</div>
+        <div class="unsafe-box">{{ comment.content|display_comment }}</div>
     </div>
     {% endfor %}
 </div>
