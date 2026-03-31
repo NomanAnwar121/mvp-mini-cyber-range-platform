@@ -420,14 +420,23 @@ def get_record_by_id(record_id):
 def get_user_records(username):
     return [r for r in IDOR_RECORDS if r["owner"] == username]
 
-def get_all_comments():
+def get_all_comments(username=None):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT id, author, content, created_at
-        FROM stored_comments
-        ORDER BY id DESC
-    """)
+    if username:
+        cursor.execute("""
+            SELECT id, author, content, created_at
+            FROM stored_comments
+            WHERE username = 'system' OR username = ?
+            ORDER BY id DESC
+        """, (username,))
+    else:
+        cursor.execute("""
+            SELECT id, author, content, created_at
+            FROM stored_comments
+            WHERE username = 'system'
+            ORDER BY id DESC
+        """)
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -609,9 +618,10 @@ def lab_sqli():
         )
 
         success = False
+        sqli_bypass = ("' OR '1'='1" in password_input or '" OR "1"="1' in password_input or "' OR 1=1" in password_input or "' OR '1'='1'--" in password_input)
         if username_input == "admin" and password_input == "supersecret":
             result = "Valid credentials, but no challenge solved yet."
-        elif username_input == "admin" and ("' OR '1'='1" in password_input or '" OR "1"="1' in password_input):
+        elif sqli_bypass:
             result = "Login bypass successful. You exploited the vulnerable query."
             flag = "FLAG{SQLI_MASTER}"
             success = True
@@ -649,7 +659,8 @@ def lab_xss():
 
     if query:
         payload_lower = query.lower()
-        success = "<script>" in payload_lower and "alert(1)" in payload_lower
+        import re
+        success = "<script>" in payload_lower and bool(re.search(r"alert\s*\(", payload_lower))
 
         if success:
             executed = True
@@ -709,7 +720,7 @@ def lab_stored_xss():
         flash("Comment submitted successfully.")
         return render_template(
             "lab_stored_xss.html",
-            comments=get_all_comments(),
+            comments=get_all_comments(username),
             attempts=attempts,
             hint=hint,
             flag=flag
@@ -717,7 +728,7 @@ def lab_stored_xss():
 
     return render_template(
         "lab_stored_xss.html",
-        comments=get_all_comments(),
+        comments=get_all_comments(username),
         attempts=attempts,
         hint=hint,
         flag=flag
